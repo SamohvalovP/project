@@ -33,8 +33,22 @@ global.db.run("DROP TABLE IF EXISTS users", (err) => {
       )
     `);
     console.log("users table created.");
+  }
+});
 
-    createArticlesTable(); // Call the function to create the "articles" table
+global.db.run("DROP TABLE IF EXISTS articles", (err) => {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  } else {
+    global.db.run(`
+      CREATE TABLE articles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        description TEXT
+      )
+    `);
+    console.log("artiles table created.");
   }
 });
 
@@ -63,12 +77,50 @@ app.post("/login", (req, res) => {
   );
 });
 
+app.post("/create-article", (req, res) => {
+  const title = req.body.title;
+  const description = req.body.description;
+
+  // Perform database query to check if the username and password are correct
+  global.db.run(
+    "INSERT INTO articles (title, description) VALUES (?, ?)",
+    [title, description],
+    (err) => {
+      if (err) {
+        console.error(err);
+        // Handle the error case here
+      } else {
+        // No errors, so redirect to the main page
+        res.redirect("/mypage");
+      }
+    }
+  );
+});
+
 app.get("/", (req, res) => {
-  res.render("main");
+  // Perform a database query to fetch all articles
+  global.db.all("SELECT * FROM articles", (err, rows) => {
+    if (err) {
+      console.error(err);
+      // Handle the error case here
+    } else {
+      // Render the "mypage" view and pass the articles as a variable
+      res.render("main", { articles: rows });
+    }
+  });
 });
 
 app.get("/mypage", (req, res) => {
-  res.render("mypage");
+  // Perform a database query to fetch all articles
+  global.db.all("SELECT * FROM articles", (err, rows) => {
+    if (err) {
+      console.error(err);
+      // Handle the error case here
+    } else {
+      // Render the "mypage" view and pass the articles as a variable
+      res.render("mypage", { articles: rows });
+    }
+  });
 });
 
 app.get("/createaccount", (req, res) => {
@@ -89,7 +141,7 @@ app.post("/user/create-user-record", (req, res) => {
         // Handle the error case here
       } else {
         // No errors, so redirect to the main page
-        res.render("main");
+        res.redirect("/mypage");
       }
     }
   );
@@ -98,24 +150,3 @@ app.post("/user/create-user-record", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-
-function createArticlesTable() {
-  global.db.run(`
-    CREATE TABLE articles (
-      title_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER,
-      title TEXT,
-      published BOOLEAN,
-      article_text TEXT,
-      FOREIGN KEY (user_id) REFERENCES users(id)
-    )
-  `, (err) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    } else {
-      console.log("articles table created.");
-      // Continue with other code or operations
-    }
-  });
-}
