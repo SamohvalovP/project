@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CM2040 Template</title>
+</head>
+<body>
+    <h1>My Page </h1>
+<!--     <form action="create-user-record" method="post">
+        <button type="submit">Create a new user record</button>
+    </form> -->
+    <a href="/" type="submit">Main page</a>
+<h1> My articles</h1>
+    <form action="/publish" method="post">
+        <label for="title">Title:</label>
+        <input type="text" title="title" id="title" required />
+        <br />
+        <br>
+        <label for="article_text">Text:</label>
+        <textarea name="particle_text" id="particle_text" rows="5" required></textarea>
+        <br />
+        <button type="submit">Publish</button>
+      </form>
+
+</body>
+</html>
