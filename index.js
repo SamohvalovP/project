@@ -8,6 +8,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/user", userRoutes);
 app.set("view engine", "ejs");
 
+var logged = false; // or true
+
 //items in the global namespace are accessible throught out the node application
 global.db = new sqlite3.Database("./database.db", function (err) {
   if (err) {
@@ -45,7 +47,8 @@ global.db.run("DROP TABLE IF EXISTS articles", (err) => {
       CREATE TABLE articles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
-        description TEXT
+        description TEXT,
+        published BOOLEAN
       )
     `);
     console.log("artiles table created.");
@@ -67,7 +70,8 @@ app.post("/login", (req, res) => {
       } else {
         if (row) {
           // Correct username and password, redirect to mypage
-          res.redirect("/mypage");
+          logged=true;
+          res.redirect("/mypage");               
         } else {
           // Incorrect username or password, redirect to createaccount
           res.redirect("/createaccount");
@@ -81,7 +85,7 @@ app.post("/create-article", (req, res) => {
   const title = req.body.title;
   const description = req.body.description;
 
-  // Perform database query to check if the username and password are correct
+  // Perform database query
   global.db.run(
     "INSERT INTO articles (title, description) VALUES (?, ?)",
     [title, description],
@@ -104,7 +108,7 @@ app.get("/", (req, res) => {
       console.error(err);
       // Handle the error case here
     } else {
-      // Render the "mypage" view and pass the articles as a variable
+      // Render the "main" view and pass the articles as a variable
       res.render("main", { articles: rows });
     }
   });
@@ -118,7 +122,8 @@ app.get("/mypage", (req, res) => {
       // Handle the error case here
     } else {
       // Render the "mypage" view and pass the articles as a variable
-      res.render("mypage", { articles: rows });
+      //res.render("mypage", { articles: rows });
+      res.render("mypage", { articles: rows, logged: logged }); //changed
     }
   });
 });
@@ -141,7 +146,7 @@ app.post("/user/create-user-record", (req, res) => {
         // Handle the error case here
       } else {
         // No errors, so redirect to the main page
-        res.redirect("/mypage");
+        res.redirect("/mypage");       
       }
     }
   );
