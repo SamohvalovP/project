@@ -20,6 +20,12 @@
     <a href="/" type="submit">Main page</a>
 
     
+     <% if (logged) { %> 
+      <br/>
+       <br/>
+      <a href="/logout" class="btn btn-primary">Logout</a>
+       <br/>
+    <% } else { %>
     <div style="display: flex; justify-content: flex-end;">
       <div>
         <h2>Login</h2>
@@ -32,6 +38,7 @@
         </form>
       </div>
     </div>
+    <% } %>
 
     <% if (logged) { %>
         <p>Welcome, you are logged in!</p> 

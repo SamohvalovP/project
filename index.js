@@ -70,8 +70,8 @@ app.post("/login", (req, res) => {
       } else {
         if (row) {
           // Correct username and password, redirect to mypage
-          logged=true;
-          res.redirect("/mypage");               
+          logged = true;
+          res.redirect("/mypage");
         } else {
           // Incorrect username or password, redirect to createaccount
           res.redirect("/createaccount");
@@ -146,10 +146,16 @@ app.post("/user/create-user-record", (req, res) => {
         // Handle the error case here
       } else {
         // No errors, so redirect to the main page
-        res.redirect("/mypage");       
+        res.redirect("/mypage");
       }
     }
   );
+});
+
+app.get("/logout", (req, res) => {
+  // Perform any cleanup or logout actions here
+  logged = false; // Set the logged-in status to false
+  res.redirect("/"); // Redirect the user to the home page or any other desired page after logout
 });
 
 app.listen(port, () => {
